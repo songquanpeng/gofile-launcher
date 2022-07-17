@@ -4,5 +4,5 @@
 ```bash
 pip install pyqt5 pyinstaller requests
 pyuic5 -o ui.py main.ui
-pyinstaller  --noconsole -F ./main.py --icon icon.png
+pyinstaller --noconsole -F ./main.py --icon icon.png -n gofile-launcher.exe
 ```
