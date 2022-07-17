@@ -21,7 +21,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 port = self.portSpinBox.text()
                 host = self.hostLineEdit.text()
                 path = self.pathLineEdit.text()
-                self.gofile = subprocess.Popen(["go-file.exe", "--port", f"{port}", "--host", f"{host}", "--path", f"{path}"], shell=True)
+                self.gofile = subprocess.Popen(["go-file.exe", "--port", f"{port}", "--host", f"{host}", "--path", f"{path}"], shell=False)
                 self.statusbar.showMessage("服务已启动")
                 self.startBtn.setText("终止")
             else:
