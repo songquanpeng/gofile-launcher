@@ -1,5 +1,8 @@
+import webbrowser
+
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox
+from PyQt5.QtGui import QIcon
 import requests
 from ui import Ui_MainWindow
 from threading import Thread
@@ -12,6 +15,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.setWindowIcon(QIcon("icon.png"))
         self.gofile = None
 
     @pyqtSlot()
@@ -20,8 +24,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if os.path.exists("go-file.exe"):
                 port = self.portSpinBox.text()
                 host = self.hostLineEdit.text()
-                path = self.pathLineEdit.text()
-                self.gofile = subprocess.Popen(["go-file.exe", "--port", f"{port}", "--host", f"{host}", "--path", f"{path}"], shell=False)
+                file_path = self.fileLineEdit.text()
+                video_path = self.videoLineEdit.text()
+                self.gofile = subprocess.Popen(
+                    ["go-file.exe", "--port", f"{port}", "--host", f"{host}", "--path", f"{file_path}", "--video",
+                     f"{video_path}"], shell=False)
                 self.statusbar.showMessage("服务已启动")
                 self.startBtn.setText("终止")
             else:
@@ -38,10 +45,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.startBtn.setText("启动")
 
     @pyqtSlot()
-    def on_chooseBtn_clicked(self):
-        path = QFileDialog.getExistingDirectory(self, "选择要分享的目录", ".")
-        self.pathLineEdit.setText(path)
-        self.statusbar.showMessage(f"选择：{path}")
+    def on_fileChooseBtn_clicked(self):
+        path = QFileDialog.getExistingDirectory(self, "选择要分享的文件的目录", ".")
+        self.fileLineEdit.setText(path)
+        self.statusbar.showMessage(f"已选择：{path}")
+
+    @pyqtSlot()
+    def on_videoChooseBtn_clicked(self):
+        path = QFileDialog.getExistingDirectory(self, "选择要分享的视频的目录", ".")
+        self.videoLineEdit.setText(path)
+        self.statusbar.showMessage(f"已选择：{path}")
+
+    @pyqtSlot()
+    def on_aboutBtn_clicked(self):
+        webbrowser.open("https://github.com/songquanpeng/gofile-launcher")
 
     @pyqtSlot()
     def on_updateBtn_clicked(self):
