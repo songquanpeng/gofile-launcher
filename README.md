@@ -2,7 +2,7 @@
 > 为 [Go File](https://github.com/songquanpeng/go-file) 制作的启动器，方便不想或不会使用终端的用户
 
 <p>
-  <a href="https://raw.githubusercontent.com/songquanpeng/gofile-launcher/master/LICENSE">
+  <a href="https://raw.githubusercontent.com/songquanpeng/gofile-launcher/main/LICENSE">
     <img src="https://img.shields.io/github/license/songquanpeng/gofile-launcher?color=brightgreen" alt="license">
   </a>
   <a href="https://github.com/songquanpeng/gofile-launcher/releases/latest">
