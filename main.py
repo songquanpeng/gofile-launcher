@@ -13,6 +13,8 @@ import os
 filename = "go-file.exe"
 if sys.platform == 'darwin':
     filename = "go-file-macos"
+    dir_path = os.path.dirname(sys.argv[0])
+    os.chdir(dir_path)
 elif sys.platform == 'linux':
     filename = "go-file"
 
