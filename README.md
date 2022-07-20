@@ -20,7 +20,14 @@
 ![demo.png](demo.png)
 ![demo_mac.png](demo_mac.png)
 
-
+## 使用
+**Windows**  
+直接双击 gofile-launcher.exe 运行  
+**macOS**  
+```
+chmod u+x gofile-launcher-macos # grant program executable privileges
+```
+之后直接双击运行 gofile-launcher-macos 或在终端中运行都可  
 ## 打包流程
 ```bash
 pip install -r requirements.txt
