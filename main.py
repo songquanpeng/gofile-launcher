@@ -10,6 +10,12 @@ import subprocess
 import sys
 import os
 
+filename = "go-file.exe"
+if sys.platform == 'darwin':
+    filename = "go-file-macos"
+elif sys.platform == 'linux':
+    filename = "go-file"
+
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -21,18 +27,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_startBtn_clicked(self):
         if self.gofile is None:
-            if os.path.exists("go-file.exe"):
+            if os.path.exists(f"./{filename}"):
                 port = self.portSpinBox.text()
                 host = self.hostLineEdit.text()
                 file_path = self.fileLineEdit.text()
                 video_path = self.videoLineEdit.text()
                 self.gofile = subprocess.Popen(
-                    ["go-file.exe", "--port", f"{port}", "--host", f"{host}", "--path", f"{file_path}", "--video",
+                    [filename, "--port", f"{port}", "--host", f"{host}", "--path", f"{file_path}", "--video",
                      f"{video_path}"], shell=False)
                 self.statusbar.showMessage("服务已启动")
                 self.startBtn.setText("终止")
             else:
-                QMessageBox.information(self, "未能找到 go-file.exe", "请点击更新按钮进行下载或者手动下载后放到本启动器相同目录下", QMessageBox.Ok)
+                QMessageBox.information(self, f"未能找到 {filename}", "请点击更新按钮进行下载或者手动下载后放到本启动器相同目录下", QMessageBox.Ok)
         else:
             if os.name == "nt":
                 subprocess.Popen("TASKKILL /F /PID {pid} /T".format(pid=self.gofile.pid))
@@ -75,13 +81,15 @@ class ThreadDownloader(Thread):
     def run(self):
         self.updateBtn.setEnabled(False)
         self.statusbar.showMessage("正在从 GitHub 上获取最新版 ...")
-        res = requests.get("https://github.com/songquanpeng/go-file/releases/latest/download/go-file.exe")
+        res = requests.get(f"https://github.com/songquanpeng/go-file/releases/latest/download/{filename}")
         if res.status_code != 200:
             self.statusbar.showMessage(f"下载失败：{res.text}")
         else:
-            with open("go-file.exe", "wb") as f:
+            with open(f"./{filename}", "wb") as f:
                 f.write(res.content)
             self.statusbar.showMessage(f"下载完成")
+            if os.name != "nt":
+                subprocess.run(["chmod", "u+x", f"./{filename}"])
         self.updateBtn.setEnabled(True)
 
 
