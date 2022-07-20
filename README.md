@@ -18,11 +18,12 @@
 
 ## 截图展示
 ![demo.png](demo.png)
+![demo_mac.png](demo_mac.png)
 
 
 ## 打包流程
 ```bash
 pip install -r requirements.txt
 pyuic5 -o ui.py main.ui
-pyinstaller --noconsole -F ./main.py --icon icon.png -n gofile-launcher.exe
+pyinstaller --noconsole -F ./main.py --icon icon.png -n gofile-launcher.exe # gofile-launcher on other platforms
 ```
