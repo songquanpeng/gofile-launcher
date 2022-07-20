@@ -33,7 +33,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 file_path = self.fileLineEdit.text()
                 video_path = self.videoLineEdit.text()
                 self.gofile = subprocess.Popen(
-                    [filename, "--port", f"{port}", "--host", f"{host}", "--path", f"{file_path}", "--video",
+                    [f"./{filename}", "--port", f"{port}", "--host", f"{host}", "--path", f"{file_path}", "--video",
                      f"{video_path}"], shell=False)
                 self.statusbar.showMessage("服务已启动")
                 self.startBtn.setText("终止")
