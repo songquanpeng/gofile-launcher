@@ -17,20 +17,22 @@
 
 
 ## 截图展示
-![demo.png](demo.png)
-![demo_mac.png](demo_mac.png)
+<img src="demo.png" alt="demo" width="597">
+
+<img src="demo_mac.png" alt="demo_mac" width="597">
 
 ## 使用
-**Windows**  
+
+### Windows 用户  
 直接双击 gofile-launcher.exe 运行  
-**macOS**  
-```
-chmod u+x gofile-launcher-macos # grant program executable privileges
-```
-之后直接双击运行 gofile-launcher-macos 或在终端中运行都可  
+
+### macOS 用户
+1. 给执行权限：`chmod u+x gofile-launcher-macos`
+2. 之后直接双击运行 gofile-launcher-macos 或在终端中运行都可  
+
 ## 打包流程
 ```bash
 pip install -r requirements.txt
 pyuic5 -o ui.py main.ui
-pyinstaller --noconsole -F ./main.py --icon icon.png -n gofile-launcher.exe # gofile-launcher on other platforms
+pyinstaller --noconsole -F ./main.py --icon icon.png -n gofile-launcher.exe
 ```
