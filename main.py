@@ -45,6 +45,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def closeEvent(self, event):
         with open(config_file, 'w') as cfg:
             self.config.write(cfg)
+        if self.gofile is not None:
+            self.on_startBtn_clicked()
         event.accept()
 
     def update_config(self, key, value):
