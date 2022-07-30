@@ -70,6 +70,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def on_updateBtn_clicked(self):
+        if os.path.exists(f"./{filename}"):
+            process = subprocess.Popen([f"./{filename}", '--version'], stdout=subprocess.PIPE)
+            output = process.communicate()[0]
+            current_version = output.decode('utf-8')
+            current_version = current_version.rstrip("\n")
+            self.statusbar.showMessage(f"正在请求 GitHub 服务器查询当前最新版本 ...")
+            res = requests.get("https://api.github.com/repos/songquanpeng/go-file/tags")
+            tags = res.json()
+            latest_version = tags[0]["name"]
+            if latest_version == current_version:
+                self.statusbar.showMessage(f"已是最新版：{latest_version}")
+                return
         worker = ThreadDownloader(self.statusbar, self.updateBtn)
         worker.start()
 
