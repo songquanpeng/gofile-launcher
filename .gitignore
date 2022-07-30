@@ -7,3 +7,4 @@ dist
 build
 *.spec
 .DS_Store
+*.ini

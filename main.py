@@ -9,8 +9,10 @@ from threading import Thread
 import subprocess
 import sys
 import os
+import configparser
 
 filename = "go-file.exe"
+config_file = "gofile-launcher.ini"
 if sys.platform == 'darwin':
     filename = "go-file-macos"
     dir_path = os.path.dirname(sys.argv[0])
@@ -25,6 +27,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setWindowIcon(QIcon("icon.png"))
         self.gofile = None
+        self.config = configparser.ConfigParser()
+        self.config.read(config_file)
+        if 'host' in self.config['DEFAULT']:
+            self.hostLineEdit.setText(self.config['DEFAULT']['host'])
+        self.hostLineEdit.textChanged.connect(lambda v: self.update_config("host", v))
+        if 'port' in self.config['DEFAULT']:
+            self.portSpinBox.setValue(int(self.config['DEFAULT']['port']))
+        self.portSpinBox.textChanged.connect(lambda v: self.update_config("port", v))
+        if 'file' in self.config['DEFAULT']:
+            self.fileLineEdit.setText(self.config['DEFAULT']['file'])
+        self.fileLineEdit.textChanged.connect(lambda v: self.update_config("file", v))
+        if 'video' in self.config['DEFAULT']:
+            self.videoLineEdit.setText(self.config['DEFAULT']['video'])
+        self.videoLineEdit.textChanged.connect(lambda v: self.update_config("video", v))
+
+    def closeEvent(self, event):
+        with open(config_file, 'w') as cfg:
+            self.config.write(cfg)
+        event.accept()
+
+    def update_config(self, key, value):
+        self.config['DEFAULT'][key] = value
 
     @pyqtSlot()
     def on_startBtn_clicked(self):
