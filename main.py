@@ -10,6 +10,7 @@ import subprocess
 import sys
 import os
 import configparser
+import socket
 import resource
 
 filename = "go-file.exe"
@@ -20,6 +21,8 @@ if sys.platform == 'darwin':
     os.chdir(dir_path)
 elif sys.platform == 'linux':
     filename = "go-file"
+
+os.environ["SESSION_SECRET"] = socket.gethostname() + os.getcwd()
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
