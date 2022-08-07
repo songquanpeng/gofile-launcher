@@ -61,15 +61,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 file_path = self.fileLineEdit.text()
                 video_path = self.videoLineEdit.text()
                 self.gofile = subprocess.Popen(
-                    [f"./{filename}", "--port", f"{port}", "--host", f"{host}", "--path", f"{file_path}", "--video",
-                     f"{video_path}"], shell=False)
+                    [f"{filename}", "--port", f"{port}", "--host", f"{host}", "--path", f"{file_path}", "--video",
+                     f"{video_path}"], shell=True, cwd="./")
                 self.statusbar.showMessage("服务已启动")
                 self.startBtn.setText("终止")
             else:
                 QMessageBox.information(self, f"未能找到 {filename}", "请点击更新按钮进行下载或者手动下载后放到本启动器相同目录下", QMessageBox.Ok)
         else:
             if os.name == "nt":
-                subprocess.Popen("TASKKILL /F /PID {pid} /T".format(pid=self.gofile.pid))
+                subprocess.Popen("TASKKILL /F /PID {pid} /T".format(pid=self.gofile.pid), shell=True)
             else:
                 # Not tested.
                 # https://stackoverflow.com/questions/4789837/how-to-terminate-a-python-subprocess-launched-with-shell-true
@@ -97,7 +97,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_updateBtn_clicked(self):
         if os.path.exists(f"./{filename}"):
-            process = subprocess.Popen([f"./{filename}", '--version'], stdout=subprocess.PIPE)
+            process = subprocess.Popen([f"{filename}", '--version'], stdout=subprocess.PIPE, shell=True, cwd="./")
             output = process.communicate()[0]
             current_version = output.decode('utf-8')
             current_version = current_version.rstrip("\n")
