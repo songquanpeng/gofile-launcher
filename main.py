@@ -14,6 +14,8 @@ import resource
 filename = "go-file.exe"
 exec_filename = filename
 config_file = "gofile-launcher.ini"
+is_windows = os.name == "nt"
+use_shell = not is_windows
 if sys.platform == 'darwin':
     filename = "go-file-macos"
     exec_filename = "./" + filename
@@ -27,7 +29,10 @@ os.environ["SESSION_SECRET"] = socket.gethostname() + os.getcwd()
 
 
 def get_latest_version(repository, username="songquanpeng"):
-    data = requests.get(f"https://api.github.com/repos/{username}/{repository}/releases/latest").json()
+    try:
+        data = requests.get(f"https://api.github.com/repos/{username}/{repository}/releases/latest").json()
+    except:
+        return None
     latest_version = data["tag_name"]
     return latest_version
 
@@ -86,7 +91,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 video_path = self.videoLineEdit.text()
                 self.gofile = subprocess.Popen(
                     [f"{exec_filename}", "--port", f"{port}", "--host", f"{host}", "--path", f"{file_path}", "--video",
-                     f"{video_path}"], shell=True, cwd="./")
+                     f"{video_path}"], shell=use_shell, cwd="./")
                 self.statusbar.showMessage("服务已启动")
                 self.startBtn.setText("终止")
             else:
@@ -121,12 +126,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_updateBtn_clicked(self):
         if os.path.exists(f"./{filename}"):
-            process = subprocess.Popen([f"{exec_filename}", '--version'], stdout=subprocess.PIPE, shell=True, cwd="./")
+            process = subprocess.Popen([f"{exec_filename}", '--version'], stdout=subprocess.PIPE, shell=use_shell, cwd="./")
             output = process.communicate()[0]
             current_version = output.decode('utf-8')
             current_version = current_version.rstrip("\n")
             self.statusbar.showMessage(f"正在请求 GitHub 服务器查询当前最新版本 ...")
             latest_version = get_latest_version("go-file")
+            if latest_version is None:
+                self.statusbar.showMessage(f"无法连接到 GitHub 服务器")
             if latest_version == current_version:
                 self.statusbar.showMessage(f"已是最新版：{latest_version}")
                 return
