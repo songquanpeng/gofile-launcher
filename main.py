@@ -10,6 +10,7 @@ import subprocess
 import sys
 import os
 import configparser
+import resource
 
 filename = "go-file.exe"
 config_file = "gofile-launcher.ini"
@@ -25,7 +26,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.setWindowIcon(QIcon("icon.png"))
+        self.setWindowIcon(QIcon(":/icon.png"))
         self.gofile = None
         self.config = configparser.ConfigParser()
         self.config.read(config_file)
