@@ -1,5 +1,3 @@
-import webbrowser
-
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox
 from PyQt5.QtGui import QIcon
@@ -25,6 +23,12 @@ elif sys.platform == 'linux':
 os.environ["SESSION_SECRET"] = socket.gethostname() + os.getcwd()
 
 
+def get_latest_version(repository, username="songquanpeng"):
+    data = requests.get(f"https://api.github.com/repos/{username}/{repository}/releases/latest").json()
+    latest_version = data["tag_name"]
+    return latest_version
+
+
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
@@ -45,6 +49,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if 'video' in self.config['DEFAULT']:
             self.videoLineEdit.setText(self.config['DEFAULT']['video'])
         self.videoLineEdit.textChanged.connect(lambda v: self.update_config("video", v))
+        self.aboutMsgBox = QMessageBox()
+        self.aboutMsgBox.setFont(self.font())
+        self.aboutMsgBox.setWindowIcon(QIcon(":/icon.png"))
+        self.aboutMsgBox.setIcon(QMessageBox.Information)
+        self.aboutMsgBox.setWindowTitle("关于")
+        self.aboutMsgBox.setText(
+            f"Gofile Launcher 由 JustSong 构建，<a href='https://github.com/songquanpeng/gofile-launcher'>源代码</a>遵循 MIT 协议")
+        self.NotFoundMsgBox = QMessageBox()
+        self.NotFoundMsgBox.setFont(self.font())
+        self.NotFoundMsgBox.setWindowIcon(QIcon(":/icon.png"))
+        self.NotFoundMsgBox.setIcon(QMessageBox.Information)
+        self.NotFoundMsgBox.setWindowTitle(f"未能找到 {filename}")
+        self.NotFoundMsgBox.setText("请点击更新按钮进行下载或者手动下载后放到本启动器相同目录下")
 
     def closeEvent(self, event):
         with open(config_file, 'w') as cfg:
@@ -70,7 +87,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.statusbar.showMessage("服务已启动")
                 self.startBtn.setText("终止")
             else:
-                QMessageBox.information(self, f"未能找到 {filename}", "请点击更新按钮进行下载或者手动下载后放到本启动器相同目录下", QMessageBox.Ok)
+                self.NotFoundMsgBox.show()
         else:
             if os.name == "nt":
                 subprocess.Popen("TASKKILL /F /PID {pid} /T".format(pid=self.gofile.pid), shell=True)
@@ -96,7 +113,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def on_aboutBtn_clicked(self):
-        webbrowser.open("https://github.com/songquanpeng/gofile-launcher")
+        self.aboutMsgBox.show()
 
     @pyqtSlot()
     def on_updateBtn_clicked(self):
@@ -106,9 +123,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             current_version = output.decode('utf-8')
             current_version = current_version.rstrip("\n")
             self.statusbar.showMessage(f"正在请求 GitHub 服务器查询当前最新版本 ...")
-            res = requests.get("https://api.github.com/repos/songquanpeng/go-file/tags")
-            tags = res.json()
-            latest_version = tags[0]["name"]
+            latest_version = get_latest_version("go-file")
             if latest_version == current_version:
                 self.statusbar.showMessage(f"已是最新版：{latest_version}")
                 return
