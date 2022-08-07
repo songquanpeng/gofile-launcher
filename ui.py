@@ -28,10 +28,13 @@ class Ui_MainWindow(object):
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setObjectName("label_2")
         self.horizontalLayout.addWidget(self.label_2)
-        self.hostLineEdit = QtWidgets.QLineEdit(self.centralwidget)
-        self.hostLineEdit.setObjectName("hostLineEdit")
-        self.horizontalLayout.addWidget(self.hostLineEdit)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.hostComboBox = QtWidgets.QComboBox(self.centralwidget)
+        self.hostComboBox.setMinimumSize(QtCore.QSize(150, 0))
+        self.hostComboBox.setCurrentText("")
+        self.hostComboBox.setMaxVisibleItems(9)
+        self.hostComboBox.setObjectName("hostComboBox")
+        self.horizontalLayout.addWidget(self.hostComboBox)
+        spacerItem = QtWidgets.QSpacerItem(48, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setObjectName("label")
@@ -87,13 +90,13 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
+        self.hostComboBox.setCurrentIndex(-1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Go File 启动器"))
         self.label_2.setText(_translate("MainWindow", "服务监听地址："))
-        self.hostLineEdit.setText(_translate("MainWindow", "localhost"))
         self.label.setText(_translate("MainWindow", "服务监听端口："))
         self.label_3.setText(_translate("MainWindow", "文件分享路径："))
         self.fileChooseBtn.setText(_translate("MainWindow", "选择路径"))

@@ -37,6 +37,10 @@ def get_latest_version(repository, username="songquanpeng"):
     return latest_version
 
 
+def get_ips():
+    return socket.gethostbyname_ex(socket.gethostname())[2]
+
+
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
@@ -45,9 +49,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.gofile = None
         self.config = configparser.ConfigParser()
         self.config.read(config_file)
+        self.ips = get_ips()
+        self.ips.insert(0, "localhost")
+        for ip in self.ips:
+            self.hostComboBox.addItem(ip, ip)
         if 'host' in self.config['DEFAULT']:
-            self.hostLineEdit.setText(self.config['DEFAULT']['host'])
-        self.hostLineEdit.textChanged.connect(lambda v: self.update_config("host", v))
+            host = self.config['DEFAULT']['host']
+            if host in self.ips:
+                idx = self.ips.index(host)
+            else:
+                idx = 0
+            self.hostComboBox.setCurrentIndex(idx)
+        self.hostComboBox.currentIndexChanged.connect(lambda v: self.update_config("host", self.ips[v]))
         if 'port' in self.config['DEFAULT']:
             self.portSpinBox.setValue(int(self.config['DEFAULT']['port']))
         self.portSpinBox.textChanged.connect(lambda v: self.update_config("port", v))
@@ -86,7 +99,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.gofile is None:
             if os.path.exists(f"./{filename}"):
                 port = self.portSpinBox.text()
-                host = self.hostLineEdit.text()
+                host = self.hostComboBox.currentText()
                 file_path = self.fileLineEdit.text()
                 video_path = self.videoLineEdit.text()
                 self.gofile = subprocess.Popen(
@@ -126,7 +139,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_updateBtn_clicked(self):
         if os.path.exists(f"./{filename}"):
-            process = subprocess.Popen([f"{exec_filename}", '--version'], stdout=subprocess.PIPE, shell=use_shell, cwd="./")
+            process = subprocess.Popen([f"{exec_filename}", '--version'], stdout=subprocess.PIPE, shell=use_shell,
+                                       cwd="./")
             output = process.communicate()[0]
             current_version = output.decode('utf-8')
             current_version = current_version.rstrip("\n")
