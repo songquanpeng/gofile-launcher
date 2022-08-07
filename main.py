@@ -15,7 +15,7 @@ filename = "go-file.exe"
 exec_filename = filename
 config_file = "gofile-launcher.ini"
 is_windows = os.name == "nt"
-use_shell = not is_windows
+use_shell = is_windows
 if sys.platform == 'darwin':
     filename = "go-file-macos"
     exec_filename = "./" + filename
