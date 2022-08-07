@@ -12,13 +12,16 @@ import socket
 import resource
 
 filename = "go-file.exe"
+exec_filename = filename
 config_file = "gofile-launcher.ini"
 if sys.platform == 'darwin':
     filename = "go-file-macos"
+    exec_filename = "./" + filename
     dir_path = os.path.dirname(sys.argv[0])
     os.chdir(dir_path)
 elif sys.platform == 'linux':
     filename = "go-file"
+    exec_filename = "./" + filename
 
 os.environ["SESSION_SECRET"] = socket.gethostname() + os.getcwd()
 
@@ -82,7 +85,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 file_path = self.fileLineEdit.text()
                 video_path = self.videoLineEdit.text()
                 self.gofile = subprocess.Popen(
-                    [f"{filename}", "--port", f"{port}", "--host", f"{host}", "--path", f"{file_path}", "--video",
+                    [f"{exec_filename}", "--port", f"{port}", "--host", f"{host}", "--path", f"{file_path}", "--video",
                      f"{video_path}"], shell=True, cwd="./")
                 self.statusbar.showMessage("服务已启动")
                 self.startBtn.setText("终止")
@@ -118,7 +121,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_updateBtn_clicked(self):
         if os.path.exists(f"./{filename}"):
-            process = subprocess.Popen([f"{filename}", '--version'], stdout=subprocess.PIPE, shell=True, cwd="./")
+            process = subprocess.Popen([f"{exec_filename}", '--version'], stdout=subprocess.PIPE, shell=True, cwd="./")
             output = process.communicate()[0]
             current_version = output.decode('utf-8')
             current_version = current_version.rstrip("\n")
