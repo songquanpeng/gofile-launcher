@@ -39,6 +39,6 @@
 ```bash
 pip install -r requirements.txt
 pyuic5 -o ui.py main.ui
-pyrcc5 -o resource.py resouce.qrc 
+pyrcc5 -o resource.py resource.qrc 
 pyinstaller --noconsole -F ./main.py --icon icon.png -n gofile-launcher.exe
 ```
