@@ -1,5 +1,5 @@
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QSystemTrayIcon, QMenu
 from PyQt5.QtGui import QIcon
 import requests
 from ui import Ui_MainWindow
@@ -46,6 +46,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         self.setWindowIcon(QIcon(":/icon.png"))
+        self.tray = QSystemTrayIcon()
+        self.tray.setIcon(QIcon(":/icon.png"))
+        self.tray.setVisible(True)
+
+        def activate_tray(reason):
+            if reason == QSystemTrayIcon.Trigger:
+                self.show()
+
+        self.tray.activated.connect(activate_tray)
+        self.menu = QMenu()
+        self.menu.setFont(self.font())
+        show_action = self.menu.addAction("设置")
+        show_action.triggered.connect(self.show)
+        quit_action = self.menu.addAction("退出")
+        quit_action.triggered.connect(self.quit)
+        self.tray.setContextMenu(self.menu)
         self.gofile = None
         self.config = configparser.ConfigParser()
         self.config.read(config_file)
@@ -85,11 +101,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.NotFoundMsgBox.setText("请点击更新按钮进行下载或者手动下载后放到本启动器相同目录下")
 
     def closeEvent(self, event):
+        self.hide()
+        event.ignore()
+
+    def quit(self):
         with open(config_file, 'w') as cfg:
             self.config.write(cfg)
         if self.gofile is not None:
             self.on_startBtn_clicked()
-        event.accept()
+        app.quit()
 
     def update_config(self, key, value):
         self.config['DEFAULT'][key] = value
