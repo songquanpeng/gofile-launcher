@@ -99,7 +99,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.NotFoundMsgBox.setWindowIcon(QIcon(":/icon.png"))
         self.NotFoundMsgBox.setIcon(QMessageBox.Information)
         self.NotFoundMsgBox.setWindowTitle(f"未能找到 {filename}")
-        self.NotFoundMsgBox.setText("请点击更新按钮进行下载或者手动下载后放到本启动器相同目录下")
+        self.NotFoundMsgBox.setText("请点击下载按钮进行下载或者手动下载后放到本启动器相同目录下")
         if not os.path.exists(f"./{filename}"):
             self.updateBtn.setText("下载 Go File")
 
