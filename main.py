@@ -14,6 +14,7 @@ import resource
 filename = "go-file.exe"
 exec_filename = filename
 config_file = "gofile-launcher.ini"
+version = "v0.0.0"
 is_windows = os.name == "nt"
 use_shell = is_windows
 if sys.platform == 'darwin':
@@ -92,7 +93,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.aboutMsgBox.setIcon(QMessageBox.Information)
         self.aboutMsgBox.setWindowTitle("关于")
         self.aboutMsgBox.setText(
-            f"Gofile Launcher 由 JustSong 构建，<a href='https://github.com/songquanpeng/gofile-launcher'>源代码</a>遵循 MIT 协议")
+            f"Gofile Launcher {version} 由 JustSong 构建，<a href='https://github.com/songquanpeng/gofile-launcher'>源代码</a>遵循 MIT 协议")
         self.NotFoundMsgBox = QMessageBox()
         self.NotFoundMsgBox.setFont(self.font())
         self.NotFoundMsgBox.setWindowIcon(QIcon(":/icon.png"))
@@ -167,11 +168,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             current_version = output.decode('utf-8')
             current_version = current_version.rstrip("\n")
             self.statusbar.showMessage(f"正在请求 GitHub 服务器查询当前最新版本 ...")
-            latest_version = get_latest_version("go-file")
-            if latest_version is None:
+            core_latest_version = get_latest_version("go-file")
+            if core_latest_version is None:
                 self.statusbar.showMessage(f"无法连接到 GitHub 服务器")
-            if latest_version == current_version:
-                self.statusbar.showMessage(f"已是最新版：{latest_version}")
+                return
+            if core_latest_version == current_version:
+                self.statusbar.showMessage(f"Go File 已是最新版：{core_latest_version}")
+                launcher_latest_version = get_latest_version("gofile-launcher")
+                if launcher_latest_version is not None and launcher_latest_version != version:
+                    self.statusbar.showMessage(f"Go File 已是最新版：{core_latest_version}，启动器更新可用：{version}->{launcher_latest_version}")
+                    return
+                self.statusbar.showMessage(f"已是最新版：Go File {core_latest_version} & 启动器 {version}")
                 return
         worker = ThreadDownloader(self.statusbar, self.updateBtn)
         worker.start()
