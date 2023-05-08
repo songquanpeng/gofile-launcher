@@ -104,8 +104,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.updateBtn.setText("下载 Go File")
 
     def closeEvent(self, event):
-        self.hide()
-        event.ignore()
+        if self.gofile is None:
+            event.accept()
+        else:
+            self.hide()
+            event.ignore()
 
     def quit(self):
         with open(config_file, 'w') as cfg:
