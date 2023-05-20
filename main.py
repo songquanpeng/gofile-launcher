@@ -28,7 +28,6 @@ elif sys.platform == 'linux':
     exec_filename = "./" + filename
 
 os.environ["SESSION_SECRET"] = system_related_secret()
-print(os.environ["SESSION_SECRET"])
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):

@@ -105,3 +105,4 @@ class Ui_MainWindow(object):
         self.aboutBtn.setText(_translate("MainWindow", "关于"))
         self.updateBtn.setText(_translate("MainWindow", "检查更新"))
         self.startBtn.setText(_translate("MainWindow", "启动"))
+import resource_rc
