@@ -1,15 +1,16 @@
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QSystemTrayIcon, QMenu
-from PyQt5.QtGui import QIcon
-import requests
-from ui import Ui_MainWindow
-from threading import Thread
+import configparser
+import os
 import subprocess
 import sys
-import os
-import configparser
-import socket
-import resource
+from threading import Thread
+
+import requests
+from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QSystemTrayIcon, QMenu
+
+from ui import Ui_MainWindow
+from utils import get_ips, system_related_secret, get_latest_version
 
 filename = "go-file.exe"
 exec_filename = filename
@@ -26,20 +27,8 @@ elif sys.platform == 'linux':
     filename = "go-file"
     exec_filename = "./" + filename
 
-os.environ["SESSION_SECRET"] = socket.gethostname() + os.getcwd()
-
-
-def get_latest_version(repository, username="songquanpeng"):
-    try:
-        data = requests.get(f"https://api.github.com/repos/{username}/{repository}/releases/latest").json()
-    except:
-        return None
-    latest_version = data["tag_name"]
-    return latest_version
-
-
-def get_ips():
-    return socket.gethostbyname_ex(socket.gethostname())[2]
+os.environ["SESSION_SECRET"] = system_related_secret()
+print(os.environ["SESSION_SECRET"])
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -179,7 +168,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.statusbar.showMessage(f"Go File 已是最新版：{core_latest_version}")
                 launcher_latest_version = get_latest_version("gofile-launcher")
                 if launcher_latest_version is not None and launcher_latest_version != version:
-                    self.statusbar.showMessage(f"Go File 已是最新版：{core_latest_version}，启动器更新可用：{version}->{launcher_latest_version}")
+                    self.statusbar.showMessage(
+                        f"Go File 已是最新版：{core_latest_version}，启动器更新可用：{version}->{launcher_latest_version}")
                     return
                 self.statusbar.showMessage(f"已是最新版：Go File {core_latest_version} & 启动器 {version}")
                 return
